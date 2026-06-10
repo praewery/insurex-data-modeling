@@ -21,7 +21,13 @@ CREATE TABLE Agent_Monthly_Performance (
     CHECK (total_premium >= 0),
     CHECK (policy_count >= 0),
     CHECK (validation_result IN ('PASS', 'FAIL')),
-    CHECK (consecutive_count >= 1)
+    CHECK (consecutive_count >= 1),
+    -- Business rule: PASS = total_premium > 15,000 AND policy_count > 5
+    CHECK (
+        (validation_result = 'PASS' AND total_premium > 15000 AND policy_count > 5)
+        OR
+        (validation_result = 'FAIL' AND (total_premium <= 15000 OR policy_count <= 5))
+    )
 );
 
 --  3: Agent_Contract_History (ประวัติการเปลี่ยนสัญญา)
